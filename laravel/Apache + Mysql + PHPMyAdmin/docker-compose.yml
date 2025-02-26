@@ -1,0 +1,41 @@
+services:
+    laravel:
+        image: php:8.3.17-apache
+        build:
+            dockerfile: ./.docker/apache/Dockerfile
+            context: .
+        environment:
+            LARAVEL_PORT_NUMBER: 80
+            LARAVEL_DATABASE_HOST: mysql
+            LARAVEL_DATABASE_NAME: laravel
+            LARAVEL_DATABASE_USER: root
+            LARAVEL_DATABASE_PASSWORD: admin
+        ports:
+            - 80:80
+            - 5173:5173
+        volumes:
+            - .:/var/www/html
+        networks:
+            - laravel-network
+    mysql:
+        image: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: admin
+            MYSQL_DATABASE: laravel
+        volumes:
+            - laravel_db:/var/lib/mysql
+        networks:
+            - laravel-network
+    phpmyadmin:
+        image: phpmyadmin
+        environment:
+            PMA_HOST: mysql
+            MYSQL_ROOT_PASSWORD: admin
+        ports:
+            - 3306:80
+        networks:
+            - laravel-network
+volumes:
+    laravel_db:
+networks:
+    laravel-network:
